@@ -13,13 +13,6 @@ FROM actor
 JOIN actor_info ON actor.actor_id = actor_info.actor_id
 ORDER BY rental_rate DESC
 LIMIT 10;
-/* WITH rental_info(
-    SELECT rental.rental_id, inventory.inventory_id, inventory.film_id
-    FROM rental
-    INNER JOIN inventory ON rental.inventory_id = inventory.inventory_id
-)
-SELECT */
-
 SELECT *
 FROM sales_by_film_category
 WHERE total_sales > (SELECT AVG(total_sales) FROM sales_by_film_category);
@@ -68,3 +61,13 @@ GROUP BY ac.actor_id, ac.first_name, ac.last_name
 HAVING COUNT(*) BETWEEN 4 AND 7
 ORDER BY actors_count DESC
 LIMIT 3;
+
+WITH address_customer AS (
+    SELECT ad.address_id, ad.city_id, cu.active
+    FROM public.address ad
+    INNER JOIN customer cu ON ad.address_id = cu.address_id
+)
+SELECT ci.city_id, ci.city, ac.active
+FROM city ci
+INNER JOIN address_customer ac ON ci.city_id = ac.city_id
+ORDER BY ac.active ASC;
