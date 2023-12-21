@@ -54,3 +54,17 @@ HAVING COUNT(*) = (
             ac.actor_id
     ) AS subquery
 );
+
+WITH actor_category AS(
+    SELECT fa.film_id, fa.actor_id, fc.category_id
+    FROM film_actor fa
+    INNER JOIN film_category fc ON fa.film_id = fc.film_id
+    WHERE fc.category_id = 3
+)
+SELECT ac.actor_id, ac.first_name, ac.last_name, COUNT(*) AS actors_count
+FROM actor ac
+INNER JOIN actor_category acat ON ac.actor_id = acat.actor_id
+GROUP BY ac.actor_id, ac.first_name, ac.last_name
+HAVING COUNT(*) BETWEEN 4 AND 7
+ORDER BY actors_count DESC
+LIMIT 3;
