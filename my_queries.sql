@@ -13,3 +13,13 @@ FROM actor
 JOIN actor_info ON actor.actor_id = actor_info.actor_id
 ORDER BY rental_rate DESC
 LIMIT 10;
+/* WITH rental_info(
+    SELECT rental.rental_id, inventory.inventory_id, inventory.film_id
+    FROM rental
+    INNER JOIN inventory ON rental.inventory_id = inventory.inventory_id
+)
+SELECT */
+
+SELECT *
+FROM sales_by_film_category
+WHERE total_sales > (SELECT AVG(total_sales) FROM sales_by_film_category)
