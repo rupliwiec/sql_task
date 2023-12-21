@@ -22,7 +22,7 @@ SELECT */
 
 SELECT *
 FROM sales_by_film_category
-WHERE total_sales > (SELECT AVG(total_sales) FROM sales_by_film_category)
+WHERE total_sales > (SELECT AVG(total_sales) FROM sales_by_film_category);
 
 SELECT film.film_id, film.title
 FROM film
@@ -30,3 +30,27 @@ WHERE
     NOT EXISTS(
         SELECT 1 FROM inventory WHERE film.film_id = inventory.film_id
     );
+
+WITH actor_category AS(
+    SELECT fa.film_id, fa.actor_id, fc.category_id
+    FROM film_actor fa
+    INNER JOIN film_category fc ON fa.film_id = fc.film_id
+    WHERE fc.category_id = 3
+)
+SELECT ac.actor_id, ac.first_name, ac.last_name, COUNT(*) AS actors_count
+FROM actor ac
+INNER JOIN actor_category acat ON ac.actor_id = acat.actor_id
+GROUP BY ac.actor_id, ac.first_name, ac.last_name
+HAVING COUNT(*) = (
+    SELECT MAX(actors_count)
+    FROM (
+        SELECT
+            ac.actor_id,
+            COUNT(*) AS actors_count
+        FROM
+            actor ac
+            INNER JOIN actor_category acat ON ac.actor_id = acat.actor_id
+        GROUP BY
+            ac.actor_id
+    ) AS subquery
+);
