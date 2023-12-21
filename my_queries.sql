@@ -71,3 +71,15 @@ SELECT ci.city_id, ci.city, ac.active
 FROM city ci
 INNER JOIN address_customer ac ON ci.city_id = ac.city_id
 ORDER BY ac.active ASC;
+
+WITH film_rent_cat AS (
+    SELECT fc.film_id, fc.category_id, f.rental_duration, f.title
+    FROM film_category fc
+    INNER JOIN film f ON fc.film_id = f.film_id
+    WHERE f.title LIKE 'A%'
+)
+SELECT ci.city, frc.title, frc.category_id, frc.rental_duration,
+SUM(rental_duration) OVER (PARTITION BY city ORDER BY category_id) AS cumulative_hours
+FROM film_rent_cat frc, city ci
+WHERE ci.city LIKE '%-%'
+ORDER BY cumulative_hours DESC, city ASC;
