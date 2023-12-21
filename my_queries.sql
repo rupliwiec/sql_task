@@ -23,3 +23,10 @@ SELECT */
 SELECT *
 FROM sales_by_film_category
 WHERE total_sales > (SELECT AVG(total_sales) FROM sales_by_film_category)
+
+SELECT film.film_id, film.title
+FROM film
+WHERE 
+    NOT EXISTS(
+        SELECT 1 FROM inventory WHERE film.film_id = inventory.film_id
+    );
